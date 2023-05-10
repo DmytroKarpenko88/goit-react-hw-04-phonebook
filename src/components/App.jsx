@@ -19,34 +19,36 @@ const users = [
 ];
 
 const App = () => {
-  const [contacts, setContacts] = useState(
-    [...users]
-    //   () => {
-    //   // const savedContacts = JSON.parse(localStorage.getItem('contacts'));
-
-    //   return JSON.parse(window.localStorage.getItem('contacts')) ?? users;
-    // }
-  );
+  const [contacts, setContacts] = useState(() => {
+    return JSON.parse(window.localStorage.getItem('contacts')) ?? [];
+  });
 
   const [filter, setFilter] = useState('');
   const [isActive, setIsActive] = useState(true);
 
-  // useEffect(() => {
-  //   const savedContacts = localStorage.getItem('contacts');
+  useEffect(() => {
+    // window.localStorage.setItem('contacts', JSON.stringify(users));
 
-  //   if (savedContacts !== null) {
-  //     setContacts({ contacts: JSON.parse(savedContacts) });
-  //   }
-  // }, []);
+    // const savedContacts = JSON.parse(window.localStorage.getItem('contacts'));
+    // console.log('savedContacts:', savedContacts);
+
+    // if (savedContacts !== null) {
+    //   console.log('!Null');
+    // }
+    window.localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
   const addUser = user => {
-    const { name, number } = user;
-    console.log('name:', name, 'number:', number);
-    console.log('contacts.name:', user.name);
-    const existing = contacts.find(({ name }) => name === user.name);
+    const existingName = contacts.find(({ name }) => name === user.name);
+    const existingNumber = contacts.find(
+      ({ number }) => number === user.number
+    );
 
-    if (existing) {
+    if (existingName) {
       alert(`${user.name} is already in contacts`);
+      return;
+    } else if (existingNumber) {
+      alert(`${user.number} is already in contacts`);
       return;
     }
 
@@ -60,17 +62,17 @@ const App = () => {
   };
   const onInputChange = e => {
     const { value } = e.currentTarget;
-    console.log('value:', value);
-
     setFilter(() => value);
   };
+
   const onStatusChange = () => {
     setIsActive(!isActive);
   };
+
   const handleDelete = idUser => {
-    this.setState(({ contacts }) => ({
-      contacts: contacts.filter(({ id }) => idUser !== id),
-    }));
+    setContacts(() => {
+      return contacts.filter(({ id }) => idUser !== id);
+    });
   };
 
   return (
