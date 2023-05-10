@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import { Container } from './App.styled';
 import { nanoid } from 'nanoid';
 // import FeedbackOptions from './FeedbackOptions';
@@ -11,7 +11,95 @@ import ContactForm from './ContactForm/ContactForm';
 import Filter from './Filter/Filter';
 import ContactList from './ContactList/ContactList';
 
-class App extends Component {
+const users = [
+  { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+  { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
+  { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
+  { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
+];
+
+const App = () => {
+  const [contacts, setContacts] = useState(
+    [...users]
+    //   () => {
+    //   // const savedContacts = JSON.parse(localStorage.getItem('contacts'));
+
+    //   return JSON.parse(window.localStorage.getItem('contacts')) ?? users;
+    // }
+  );
+
+  const [filter, setFilter] = useState('');
+  const [isActive, setIsActive] = useState(true);
+
+  // useEffect(() => {
+  //   const savedContacts = localStorage.getItem('contacts');
+
+  //   if (savedContacts !== null) {
+  //     setContacts({ contacts: JSON.parse(savedContacts) });
+  //   }
+  // }, []);
+
+  const addUser = user => {
+    const { name, number } = user;
+    console.log('name:', name, 'number:', number);
+    console.log('contacts.name:', user.name);
+    const existing = contacts.find(({ name }) => name === user.name);
+
+    if (existing) {
+      alert(`${user.name} is already in contacts`);
+      return;
+    }
+
+    setContacts(p => [{ ...user }, ...p]);
+  };
+
+  const getVisibleItems = () => {
+    return contacts.filter(el =>
+      el.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+    );
+  };
+  const onInputChange = e => {
+    const { value } = e.currentTarget;
+    console.log('value:', value);
+
+    setFilter(() => value);
+  };
+  const onStatusChange = () => {
+    setIsActive(!isActive);
+  };
+  const handleDelete = idUser => {
+    this.setState(({ contacts }) => ({
+      contacts: contacts.filter(({ id }) => idUser !== id),
+    }));
+  };
+
+  return (
+    <>
+      <Container>
+        <h2>Phonebook</h2>
+
+        <ContactForm onSubmit={addUser} />
+      </Container>
+
+      <Container>
+        <h2>Contacts</h2>
+
+        <Filter
+          onChange={onInputChange}
+          value={filter}
+          isActive={isActive}
+          onClick={onStatusChange}
+        />
+        <ContactList
+          visibleList={getVisibleItems()}
+          onDeleteUser={handleDelete}
+          isActive={isActive}
+        />
+      </Container>
+    </>
+  );
+};
+class OLDApp extends Component {
   state = {
     contacts: [
       { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
