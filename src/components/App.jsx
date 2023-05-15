@@ -38,7 +38,7 @@ const App = () => {
       return;
     }
 
-    setContacts(p => [{ ...user }, ...p]);
+    setContacts(prevState => [{ ...user }, ...prevState]);
   };
 
   const getVisibleItems = () => {
@@ -48,7 +48,7 @@ const App = () => {
   };
   const onInputChange = e => {
     const { value } = e.currentTarget;
-    setFilter(() => value);
+    setFilter(value);
   };
 
   const onStatusChange = () => {
@@ -56,8 +56,8 @@ const App = () => {
   };
 
   const handleDelete = idUser => {
-    setContacts(() => {
-      return contacts.filter(({ id }) => idUser !== id);
+    setContacts(prevState => {
+      return prevState.filter(({ id }) => idUser !== id);
     });
   };
 
